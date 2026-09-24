@@ -1640,10 +1640,14 @@ export class App {
       const ok = await copyText($('#io-pgn').value, $('#io-pgn'));
       toast(ok ? 'PGN copied.' : 'Select the text and copy it manually.');
     });
-    $('#io-download-pgn').addEventListener('click', () => {
-      const ok = downloadText(`chess-${new Date().toISOString().slice(0, 10)}.pgn`, $('#io-pgn').value);
-      if (!ok) toast('Downloading is blocked here. Copy the PGN instead.');
-    });
+    // The hosted build leaves this button out because its viewer blocks downloads.
+    const download = $('#io-download-pgn');
+    if (download) {
+      download.addEventListener('click', () => {
+        const ok = downloadText(`chess-${new Date().toISOString().slice(0, 10)}.pgn`, $('#io-pgn').value);
+        if (!ok) toast('Downloading is blocked here. Copy the PGN instead.');
+      });
+    }
     $('#io-load-pgn').addEventListener('click', () => this.loadPgnText($('#io-pgn').value));
     $('#io-load-fen').addEventListener('click', () => this.loadFenText($('#io-fen').value));
     $('#io-file').addEventListener('change', async (e) => {

@@ -122,7 +122,11 @@ function build() {
     .filter((line) => /<title>|fonts\.g|preconnect|name="description"/.test(line))
     .map((line) => line.trim())
     .join('\n');
-  const fragment = `${headKeep}\n${style}\n${bodyMatch[1].trim().replace(scriptTag, () => script)}\n`;
+  // Hosted viewers block file downloads, so the fragment drops that button.
+  const downloadButton = '<button class="btn" type="button" id="io-download-pgn">Download .pgn</button>';
+  if (!html.includes(downloadButton)) throw new Error('index.html no longer contains the download button markup.');
+  const body = bodyMatch[1].trim().replace(downloadButton, '').replace(scriptTag, () => script);
+  const fragment = `${headKeep}\n${style}\n${body}\n`;
 
   fs.mkdirSync(dist, { recursive: true });
   fs.writeFileSync(path.join(dist, 'chess.html'), full);
